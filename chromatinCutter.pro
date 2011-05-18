@@ -1,19 +1,21 @@
-VPATH += ../shared
-INCLUDEPATH += ../shared
+#-------------------------------------------------
+#
+# Project created by QtCreator 2011-05-18T16:59:54
+#
+#-------------------------------------------------
 
-HEADERS       = glwidget.h \
-                window.h \
-                qtlogo.h
-SOURCES       = glwidget.cpp \
-                main.cpp \
-                window.cpp \
-                qtlogo.cpp
-QT           += opengl
+QT       += core gui opengl
 
-# install
-#target.path = $$[QT_INSTALL_EXAMPLES]/opengl/hellogl
-#sources.files = $$SOURCES $$HEADERS $$RESOURCES $$FORMS hellogl.pro
-#sources.path = $$[QT_INSTALL_EXAMPLES]/opengl/hellogl
-#INSTALLS += target sources
+TARGET = chromatinCutter
+TEMPLATE = app
 
-# symbian: include($$QT_SOURCE_TREE/examples/symbianpkgrules.pri)
+
+SOURCES += main.cpp\
+        mainwindow.cpp \
+    glwidget.cpp \
+    qtlogo.cpp
+
+HEADERS  += mainwindow.h \
+    glwidget.h
+
+FORMS    += mainwindow.ui
