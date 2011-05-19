@@ -5,8 +5,11 @@
 
 class nucleosome {
 public:
-    int location;   // Index of the last base pair wrapped around the nucleosome
+    long location;  // Index of the last base pair wrapped around the nucleosome
     bool attached;  // Stores whether it is attached or not.
+
+    const bool operator < (const nucleosome &n) const { return location < n.location; };
+    const bool operator < (const long num) const { return location < num; };
 };
 
 class GLWidget : public QGLWidget
@@ -48,10 +51,13 @@ private:
     QPoint lastPos; // Last place the mouse was.
 
     // This is a list of histone center locations, in base pairs.
+    // Then a function to tell whether a specified base-pair location
+    // can be cut (it can if it is not inside a nuclesome section).
     QVector<nucleosome>    nucleosomes;
+    bool validCutLocation(long loc);
 
     // This is a list of cut locations, in base pairs.
-    QVector<int>    cutLocations;
+    QVector<long>    cutLocations;
 };
 
 #endif

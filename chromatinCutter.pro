@@ -4,7 +4,8 @@
 #
 #-------------------------------------------------
 
-QT       += core gui opengl
+QT += core gui opengl
+#CONFIG += qt console
 
 TARGET = chromatinCutter
 TEMPLATE = app

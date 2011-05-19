@@ -72,7 +72,7 @@ void GLWidget::updateModel(void)
     // index, then we add a whole nucleosome length and locate the
     // new nucleosome there.
     int i;
-    int last_location = 0;
+    long last_location = 0;
     for (i = 0; i < totalNucleosomes; i++) {
 
         // Select a linker length.  It will Gaussian distributed based on
@@ -88,13 +88,17 @@ void GLWidget::updateModel(void)
         // Add the length onto the existing DNA strand and put a nucleosome
         // there.
         int add_length = linker_length + bpPerNucleosome;
-        int location = last_location + add_length;
+        long location = last_location + add_length;
         nucleosome n;
         n.location = location;
         n.attached = true;
         nucleosomes.push_back(n);
         last_location = n.location;
     }
+
+    // Sort the list of nucleosomes by location (this should already be in order,
+    // but we make sure).
+    qSort(nucleosomes);
 
     // Figure out which nucleosomes are detached.  We do this by
     // randomly removing them until the specified percent is unattached.
@@ -116,6 +120,50 @@ void GLWidget::updateModel(void)
         }
     }
 
+    // Select locations for the cuts.  First figure out how many there are total and then
+    // put them all in.  Don't allow cuts that would fall within a wrapped nucleosome.
+    // We compute the number of base pairs by multiplying the expected amount of DNA
+    // per nucleosome (including linker) by the number of nucleosomes.
+    long num_bps = (bpPerNucleosome + bpPerLinker) * totalNucleosomes;
+    int num_cuts = (num_bps/3.0e3) * cutsPer3kBasePairs;
+    for (i = 0; i < num_cuts; i++) {
+
+        // Keep trying until we find a valid cut location
+        long try_cut;
+        do {
+            try_cut = random_0_1() * num_bps;
+        } while (!validCutLocation(try_cut));
+        cutLocations.push_back(try_cut);
+    }
+
+    // Sort the cut locations, to make it faster to process them during graphics and
+    // histogram formation.
+    qSort(cutLocations);
+}
+
+// Returns true if the specified location is a valid cut location
+// (a base pair that is not inside a wrapped nucleosome) and false if
+// it is inside a wrapped nucleosome.
+bool GLWidget::validCutLocation(long loc)
+{
+    // Find the first nucleosome that is at a location that is equal to
+    // or larger than the location.
+    nucleosome  which;
+    which.location = loc;
+    QVector<nucleosome>::ConstIterator i = qLowerBound(nucleosomes, which);
+
+    // If there is one, then see if we're within the wrapped base-pair region.
+    // Then see if this histone is wrapped.
+    // If so, return false.
+    if ( (i != nucleosomes.end()) && (*i).attached ) {
+        long nuc_loc = (*i).location;
+        if (nuc_loc - bpPerNucleosome <= loc) {
+            return false;
+        }
+    }
+
+    // We're in the clear.
+    return true;
 }
 
 void GLWidget::setMissingHistonePercent(int percent)
@@ -181,7 +229,10 @@ void GLWidget::paintGL()
     // to the bottom.
     int last_bp = 0;    // Last base-pair location drawn.
     int last_sl = 0;    // Screen location of this last pair.
+    int next_cut_index = 0; // Index of the next cut location to draw.
     for (i = 0; i < nucleosomes.size(); i++) {
+
+        // Draw the line from the previous nucleosome to this one.
         glColor3f(1.0, 1.0, 1.0);
         int inc_bp = nucleosomes[i].location - last_bp;
         int new_sl = last_sl + inc_bp - bpPerNucleosome;
@@ -190,6 +241,7 @@ void GLWidget::paintGL()
             glVertex2f(new_sl, 0);
         glEnd();
 
+        // Draw this nucleosome, either in wrapped form or unwrapped.
         glColor3f(0.3, 1.0, 0.3);
         if (nucleosomes[i].attached) {
             glBegin(GL_POINTS);
@@ -200,6 +252,35 @@ void GLWidget::paintGL()
                 glVertex2f(new_sl, bpPerNucleosome/2.0);
                 glVertex2f(new_sl, -bpPerNucleosome/2.0);
             glEnd();
+        }
+
+        // Draw any cut lines that fall between the last and the
+        // current base-pair value.
+        glColor3f(1.0, 0.3, 0.3);
+        while ( (next_cut_index < cutLocations.size())
+                && (cutLocations[next_cut_index] <= last_bp + inc_bp) ) {
+
+            // If this cut is before the start of the nucleosome, then we
+            // draw it vertically across the DNA.
+            float halfcut = bpPerLinker/2.0;    // Half length of cut line
+            if (last_bp + inc_bp - bpPerNucleosome > cutLocations[next_cut_index]) {
+                long xloc = last_sl + (cutLocations[next_cut_index] - last_bp);
+                glBegin(GL_LINES);
+                    glVertex3f(xloc, halfcut, 1.0);
+                    glVertex3f(xloc, -halfcut, 1.0);
+                glEnd();
+            } else {
+                // If this is cut within the chromosome, then draw it horizontally
+                // the fraction of the way from the bottom of the screen to the top
+                // that it is along the nucleosomal DNA (this is an abstract representation).
+                long yloc = -bpPerNucleosome/2 + (last_bp + inc_bp - cutLocations[next_cut_index]);
+                glBegin(GL_LINES);
+                    glVertex3f(new_sl - halfcut, yloc, 1.0);
+                    glVertex3f(new_sl + halfcut, yloc, 1.0);
+                glEnd();
+            }
+
+            next_cut_index++;
         }
 
         last_bp += inc_bp;
