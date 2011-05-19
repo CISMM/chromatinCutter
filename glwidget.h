@@ -2,6 +2,7 @@
 #define GLWIDGET_H
 
 #include <QGLWidget>
+#include "histogram_values_passer.h"
 
 class nucleosome {
 public:
@@ -26,9 +27,9 @@ public slots:
     void setCutsPer3kBasePairs(int cuts);
 
 signals:
-    void xRotationChanged(int angle);
-    void yRotationChanged(int angle);
-    void zRotationChanged(int angle);
+    void newMinHistogramValue(double val);
+    void newMaxHistogramValue(double val);
+    void newHistogramCounts(histogram_values_passer);
 
 protected:
     void initializeGL();
@@ -40,6 +41,10 @@ protected:
     // Updates the model of histone and cut locations based on
     // the now-current values for the private variables.
     void updateModel(void);
+
+    // Updates the statistics based on the model.  This reports
+    // the new values through signals.
+    void updateStatistics(void);
 
 private:
     int bpPerNucleosome;

@@ -46,7 +46,7 @@ GLWidget::GLWidget(QWidget *parent)
     cutsPer3kBasePairs = 1;
 
     // How many nucleosomes to add to our model.
-    totalNucleosomes = 1000;
+    totalNucleosomes = 5000;
 
     // Set the initial state of the model.
     updateModel();
@@ -139,6 +139,11 @@ void GLWidget::updateModel(void)
     // Sort the cut locations, to make it faster to process them during graphics and
     // histogram formation.
     qSort(cutLocations);
+
+    // Figure out the histogram of cut lengths, including the minimum and maximum,
+    // and fill in the histogram values.  Then emit messages to tell the histogram
+    // display what to fill in.
+    updateStatistics();
 }
 
 // Returns true if the specified location is a valid cut location
@@ -165,6 +170,54 @@ bool GLWidget::validCutLocation(long loc)
     // We're in the clear.
     return true;
 }
+
+void GLWidget::updateStatistics(void)
+{
+    // Compute the number of base pairs between each pair of cuts.
+    // Also keep track of the minimum and maximum found.
+    double min_bp = 1e50, max_bp = 0;
+    int i;
+    QVector<double> bps;
+    long last_cut = 0;
+    for (i = 0; i < cutLocations.size(); i++) {
+        double bp = cutLocations[i] - last_cut;
+
+        // If two cut at the same location, we don't count it as a zero cut.
+        if (bp > 0) {
+            bps.push_back(bp);
+            if (bp < min_bp) { min_bp = bp; }
+            if (bp > max_bp) { max_bp = bp; }
+            last_cut = cutLocations[i];
+        }
+    }
+
+    // Fill in a histogram that has many steps from the minimum value to the
+    // maximum value, adding each of the entries into the bin associated with it.
+    // Then send the new values to the histogram.
+    if (bps.size() > 1) {
+
+        const int num_bins = 100;
+        double bin_size = (max_bp - min_bp) / num_bins;
+        histogram_values_passer    counts;
+        counts.resize(num_bins);
+        int i;
+        for (i = 0; i < num_bins; i++) {
+            counts[i] = 0;
+        }
+        for (i = 0; i < bps.size(); i++) {
+            int bin = floor( (bps[i]-min_bp) / bin_size );
+            if (bin >= num_bins) { bin = num_bins - 1; }    // For one right at the end
+            counts[bin] = counts[bin] + 1;
+        }
+
+        // Fill in the histogram and then emit messages to update its display.
+        emit newMinHistogramValue(min_bp);
+        emit newMaxHistogramValue(max_bp);
+        emit newHistogramCounts(counts);
+    }
+}
+
+
 
 void GLWidget::setMissingHistonePercent(int percent)
 {

@@ -219,6 +219,9 @@
    <header>glwidget.h</header>
    <container>1</container>
    <slots>
+    <signal>newMinHistogramValue(double)</signal>
+    <signal>newMaxHistogramValue(double)</signal>
+    <signal>newHistogramCounts(histogram_values_passer)</signal>
     <slot>setMissingHistonePercent(int)</slot>
     <slot>setNucleosomeSpacingVariance(int)</slot>
     <slot>setCutsPer3kBasePairs(int)</slot>
@@ -229,6 +232,11 @@
    <extends>QWidget</extends>
    <header>qwt_histogram.h</header>
    <container>1</container>
+   <slots>
+    <slot>setMinX(double)</slot>
+    <slot>setMaxX(double)</slot>
+    <slot>setCounts(histogram_values_passer)</slot>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>
@@ -241,11 +249,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>140</x>
-     <y>486</y>
+     <y>208</y>
     </hint>
     <hint type="destinationlabel">
      <x>139</x>
-     <y>476</y>
+     <y>198</y>
     </hint>
    </hints>
   </connection>
@@ -256,12 +264,12 @@
    <slot>setNum(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>411</x>
-     <y>491</y>
+     <x>425</x>
+     <y>213</y>
     </hint>
     <hint type="destinationlabel">
-     <x>415</x>
-     <y>476</y>
+     <x>429</x>
+     <y>198</y>
     </hint>
    </hints>
   </connection>
@@ -272,12 +280,12 @@
    <slot>setNum(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>692</x>
-     <y>490</y>
+     <x>722</x>
+     <y>212</y>
     </hint>
     <hint type="destinationlabel">
-     <x>684</x>
-     <y>467</y>
+     <x>714</x>
+     <y>189</y>
     </hint>
    </hints>
   </connection>
@@ -289,11 +297,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>189</x>
-     <y>492</y>
+     <y>214</y>
     </hint>
     <hint type="destinationlabel">
      <x>191</x>
-     <y>326</y>
+     <y>140</y>
     </hint>
    </hints>
   </connection>
@@ -304,12 +312,12 @@
    <slot>setNucleosomeSpacingVariance(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>374</x>
-     <y>486</y>
+     <x>388</x>
+     <y>208</y>
     </hint>
     <hint type="destinationlabel">
      <x>382</x>
-     <y>401</y>
+     <y>140</y>
     </hint>
    </hints>
   </connection>
@@ -320,12 +328,60 @@
    <slot>setCutsPer3kBasePairs(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>641</x>
-     <y>486</y>
+     <x>671</x>
+     <y>208</y>
     </hint>
     <hint type="destinationlabel">
      <x>645</x>
-     <y>350</y>
+     <y>140</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>widget</sender>
+   <signal>newMinHistogramValue(double)</signal>
+   <receiver>widget_2</receiver>
+   <slot>setMinX(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>164</x>
+     <y>134</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>278</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>widget</sender>
+   <signal>newMaxHistogramValue(double)</signal>
+   <receiver>widget_2</receiver>
+   <slot>setMaxX(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>244</x>
+     <y>140</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>245</x>
+     <y>285</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>widget</sender>
+   <signal>newHistogramCounts(histogram_values_passer)</signal>
+   <receiver>widget_2</receiver>
+   <slot>setCounts(histogram_values_passer)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>323</x>
+     <y>135</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>315</x>
+     <y>263</y>
     </hint>
    </hints>
   </connection>
