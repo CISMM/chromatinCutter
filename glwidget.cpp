@@ -38,6 +38,9 @@ static double random_normal_sample(void)
 GLWidget::GLWidget(QWidget *parent)
     : QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
 {
+    bpPerLinker = 20;
+    bpPerNucleosome = 146;
+
     missingHistonePercent = 0;
     nucleosomeSpacingVariance = 0;
     cutsPer3kBasePairs = 1;
@@ -61,9 +64,9 @@ void GLWidget::updateModel(void)
     cutLocations.clear();
 
     // Add nucleosomes into the model.  Each histone causes a chain of
-    // DNA 146 base-pairs long to wrap around it to form a nucleosome.
+    // DNA bpPerNucleosome base-pairs long to wrap around it to form a nucleosome.
     // The length of DNA between each wrapped nucleosome is on average
-    // 20 base-pairs long.  When we add a new nucleosome, we do so by
+    // bpPerLinker base-pairs long.  When we add a new nucleosome, we do so by
     // figuring out how long the linker is from the last one (must be
     // at least 1 base-pair long) and add it to the last nucleosome
     // index, then we add a whole nucleosome length and locate the
@@ -71,8 +74,8 @@ void GLWidget::updateModel(void)
     int i;
     int last_location = 0;
     for (i = 0; i < totalNucleosomes; i++) {
-        int linker_length = 20; // XXX Will be based on variance
-        int add_length = linker_length + 146;
+        int linker_length = bpPerLinker; // XXX Will be based on variance
+        int add_length = linker_length + bpPerNucleosome;
         int location = last_location + add_length;
         nucleosome n;
         n.location = location;
@@ -128,9 +131,6 @@ void GLWidget::initializeGL()
 {
     qglClearColor(Qt::black);
 
-    // Construct the model here.
-    // XXX
-
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glShadeModel(GL_SMOOTH);
@@ -139,6 +139,9 @@ void GLWidget::initializeGL()
     glEnable(GL_MULTISAMPLE);
     static GLfloat lightPosition[4] = { 0.5, 5.0, 7.0, 1.0 };
     glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+
+    // Makes the colors for the primitives be what we want.
+    glDisable(GL_LIGHTING);
 }
 
 void GLWidget::paintGL()
@@ -154,40 +157,42 @@ void GLWidget::paintGL()
     glDisable(GL_TEXTURE_2D);
 
     // Set the base-pair to full-screen scale.
-    glScalef(0.01, 0.01, 1.0);
+    glScalef(1.0/bpPerNucleosome, 1.0/bpPerNucleosome, 1.0);
 
-    // Draw the model, showing the linkers, the histones, and the cuts for the
+//    float scale = 1.0 / log(cutsPer3kBasePairs+9);
+//    glScalef(scale,scale,scale);
+
+    // Draw the model, showing the linkers, the nucleosomes, and the cuts for the
     // first part of the chain to give an idea of what it looks like.
     // The window is 1 unit high and however wide the aspect ratio requires.
+    // Set the scale so that the bpPerNucleosome base pairs span from the top of the display
+    // to the bottom.
     int last_bp = 0;    // Last base-pair location drawn.
     int last_sl = 0;    // Screen location of this last pair.
     for (i = 0; i < nucleosomes.size(); i++) {
         glColor3f(1.0, 1.0, 1.0);
-        int new_bp = nucleosomes[i].location - 146 - last_bp;
+        int inc_bp = nucleosomes[i].location - last_bp;
+        int new_sl = last_sl + inc_bp - bpPerNucleosome;
         glBegin(GL_LINES);
-            glVertex2f(last_bp, 0);
-            glVertex2f(new_bp, 0);
+            glVertex2f(last_sl, 0);
+            glVertex2f(new_sl, 0);
         glEnd();
 
-        glColor3f(1.0, 0.0, 0.0);
-        glBegin(GL_POINTS);
-            glVertex2f(new_bp, 0);
-        glEnd();
+        glColor3f(0.3, 1.0, 0.3);
+        if (nucleosomes[i].attached) {
+            glBegin(GL_POINTS);
+                glVertex2f(new_sl, 0);
+            glEnd();
+        } else {
+            glBegin(GL_LINES);
+                glVertex2f(new_sl, bpPerNucleosome/2.0);
+                glVertex2f(new_sl, -bpPerNucleosome/2.0);
+            glEnd();
+        }
 
-        last_bp = new_bp;
+        last_bp += inc_bp;
+        last_sl = new_sl;
     }
-
-    // XXX Drawing stuff that was for debugging.
-    float scale = 1.0 / log(cutsPer3kBasePairs+9);
-    float width = 1 + missingHistonePercent / 100.0;
-    float height = 1 + nucleosomeSpacingVariance / 225.0;
-    glScalef(scale,scale,scale);
-    glBegin(GL_QUADS);
-        glVertex3d(-width, -height, 0.0);
-        glVertex3d( width, -height, 0.0);
-        glVertex3d( width,  height, 0.0);
-        glVertex3d(-width,  height, 0.0);
-    glEnd();
 }
 
 void GLWidget::resizeGL(int width, int height)

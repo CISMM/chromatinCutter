@@ -39,6 +39,8 @@ protected:
     void updateModel(void);
 
 private:
+    int bpPerNucleosome;
+    int bpPerLinker;
     int totalNucleosomes;
     int missingHistonePercent;
     int nucleosomeSpacingVariance;
