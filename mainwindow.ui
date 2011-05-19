@@ -26,6 +26,12 @@
         <verstretch>2</verstretch>
        </sizepolicy>
       </property>
+      <property name="minimumSize">
+       <size>
+        <width>400</width>
+        <height>100</height>
+       </size>
+      </property>
       <zorder>histoneFractionSlider</zorder>
      </widget>
     </item>
@@ -56,7 +62,7 @@
           <item>
            <widget class="QLabel" name="label">
             <property name="text">
-             <string>Fraction of Histones Missing</string>
+             <string>Percent of Histones Missing</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>

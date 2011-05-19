@@ -72,27 +72,35 @@ void GLWidget::paintGL()
     glLoadIdentity();
     glTranslatef(0.0, 0.0, -10.0);
     float scale = 1.0 / log(cutsPer3kBasePairs+9);
+    float width = 1 + missingHistonePercent / 100.0;
+    float height = 1 + nucleosomeSpacingVariance / 225.0;
     glScalef(scale,scale,scale);
     glBegin(GL_QUADS);
-        glVertex3d(-1.0, -1.0, 0.0);
-        glVertex3d( 1.0, -1.0, 0.0);
-        glVertex3d( 1.0,  1.0, 0.0);
-        glVertex3d(-1.0,  1.0, 0.0);
+        glVertex3d(-width, -height, 0.0);
+        glVertex3d( width, -height, 0.0);
+        glVertex3d( width,  height, 0.0);
+        glVertex3d(-width,  height, 0.0);
     glEnd();
 }
 
 void GLWidget::resizeGL(int width, int height)
 {
-    int side = qMin(width, height);
-    glViewport((width - side) / 2, (height - side) / 2, side, side);
+//    int side = qMin(width, height);
+//    glViewport((width - side) / 2, (height - side) / 2, side, side);
+    glViewport(0, 0, width, height);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-#ifdef QT_OPENGL_ES_1
-    glOrthof(-0.5, +0.5, -0.5, +0.5, 4.0, 15.0);
-#else
-    glOrtho(-0.5, +0.5, -0.5, +0.5, 4.0, 15.0);
-#endif
+    // Make the window one unit high (-0.5 to 0.5) and have an aspect ratio that matches
+    // the aspect ratio of the window.
+    float aspect;
+    if ((height <= 0) || (width < 0)) {
+        aspect = 1.0;
+    } else {
+        aspect = static_cast<float>(width)/height;
+    }
+    glOrtho(-aspect/2, aspect/2, -0.5, 0.5, 5.0, 15.0);
+//    glOrtho(-0.5, +0.5, -0.5, +0.5, 4.0, 15.0);
     glMatrixMode(GL_MODELVIEW);
 }
 
