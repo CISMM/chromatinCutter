@@ -26,6 +26,7 @@
         <verstretch>2</verstretch>
        </sizepolicy>
       </property>
+      <zorder>histoneFractionSlider</zorder>
      </widget>
     </item>
     <item row="1" column="0">
@@ -204,6 +205,11 @@
    <extends>QWidget</extends>
    <header>glwidget.h</header>
    <container>1</container>
+   <slots>
+    <slot>setMissingHistonePercent(int)</slot>
+    <slot>setNucleosomeSpacingVariance(int)</slot>
+    <slot>setCutsPer3kBasePairs(int)</slot>
+   </slots>
   </customwidget>
   <customwidget>
    <class>HistoPlot</class>
@@ -259,6 +265,54 @@
     <hint type="destinationlabel">
      <x>684</x>
      <y>467</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>histoneFractionSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>widget</receiver>
+   <slot>setMissingHistonePercent(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>189</x>
+     <y>492</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>191</x>
+     <y>326</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>nucleosomeVarianceSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>widget</receiver>
+   <slot>setNucleosomeSpacingVariance(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>374</x>
+     <y>486</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>382</x>
+     <y>401</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cutsPer3KBPSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>widget</receiver>
+   <slot>setCutsPer3kBasePairs(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>641</x>
+     <y>486</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>645</x>
+     <y>350</y>
     </hint>
    </hints>
   </connection>

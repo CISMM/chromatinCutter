@@ -12,9 +12,9 @@ public:
     ~GLWidget();
 
 public slots:
-    void setXRotation(int angle);
-    void setYRotation(int angle);
-    void setZRotation(int angle);
+    void setMissingHistonePercent(int percent);
+    void setNucleosomeSpacingVariance(int variance);
+    void setCutsPer3kBasePairs(int cuts);
 
 signals:
     void xRotationChanged(int angle);
@@ -29,9 +29,9 @@ protected:
     void mouseMoveEvent(QMouseEvent *event);
 
 private:
-    int xRot;
-    int yRot;
-    int zRot;
+    int missingHistonePercent;
+    int nucleosomeSpacingVariance;
+    int cutsPer3kBasePairs;
     QPoint lastPos;
     QColor qtGreen;
     QColor qtPurple;
