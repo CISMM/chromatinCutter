@@ -74,7 +74,19 @@ void GLWidget::updateModel(void)
     int i;
     int last_location = 0;
     for (i = 0; i < totalNucleosomes; i++) {
+
+        // Select a linker length.  It will Gaussian distributed based on
+        // the variance, with a mean at the specified linker length.  If the
+        // length is less than 1, we pick another random number to avoid
+        // this case.  Also, if it tries to go above twice the linker length
+        // then we reject it; this will avoid increasing the mean separation.
         int linker_length = bpPerLinker; // XXX Will be based on variance
+        if (nucleosomeSpacingVariance > 0) do {
+            linker_length = bpPerLinker + random_normal_sample() * sqrt(nucleosomeSpacingVariance);
+        } while ((linker_length <= 0) || (linker_length >= 2*bpPerLinker));
+
+        // Add the length onto the existing DNA strand and put a nucleosome
+        // there.
         int add_length = linker_length + bpPerNucleosome;
         int location = last_location + add_length;
         nucleosome n;
@@ -153,7 +165,7 @@ void GLWidget::paintGL()
     glTranslatef(0.0, 0.0, -10.0);
 
     // Set up rendering state.
-    glPointSize(3.0);
+    glPointSize(5.0);
     glDisable(GL_TEXTURE_2D);
 
     // Set the base-pair to full-screen scale.
