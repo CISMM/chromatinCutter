@@ -11,11 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Chromatin Cutter</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="2" column="0">
+    <item row="3" column="0">
      <widget class="HistoPlot" name="widget_2" native="true">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -25,24 +25,7 @@
       </property>
      </widget>
     </item>
-    <item row="0" column="0">
-     <widget class="GLWidget" name="widget" native="true">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>400</width>
-        <height>100</height>
-       </size>
-      </property>
-      <zorder>histoneFractionSlider</zorder>
-     </widget>
-    </item>
-    <item row="1" column="0">
+    <item row="2" column="0">
      <widget class="QFrame" name="frame">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -189,6 +172,29 @@
       </layout>
      </widget>
     </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="versionLabel">
+      <property name="text">
+       <string>Version Unknown</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="GLWidget" name="widget" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>400</width>
+        <height>100</height>
+       </size>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -222,6 +228,7 @@
     <signal>newMinHistogramValue(double)</signal>
     <signal>newMaxHistogramValue(double)</signal>
     <signal>newHistogramCounts(histogram_values_passer)</signal>
+    <signal>newVersionLabel(QString)</signal>
     <slot>setMissingHistonePercent(int)</slot>
     <slot>setNucleosomeSpacingVariance(int)</slot>
     <slot>setCutsPer3kBasePairs(int)</slot>
@@ -248,12 +255,12 @@
    <slot>setNum(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>140</x>
-     <y>208</y>
+     <x>169</x>
+     <y>244</y>
     </hint>
     <hint type="destinationlabel">
-     <x>139</x>
-     <y>198</y>
+     <x>168</x>
+     <y>217</y>
     </hint>
    </hints>
   </connection>
@@ -264,12 +271,12 @@
    <slot>setNum(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>425</x>
-     <y>213</y>
+     <x>567</x>
+     <y>244</y>
     </hint>
     <hint type="destinationlabel">
-     <x>429</x>
-     <y>198</y>
+     <x>567</x>
+     <y>217</y>
     </hint>
    </hints>
   </connection>
@@ -280,12 +287,12 @@
    <slot>setNum(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>722</x>
-     <y>212</y>
+     <x>849</x>
+     <y>244</y>
     </hint>
     <hint type="destinationlabel">
-     <x>714</x>
-     <y>189</y>
+     <x>849</x>
+     <y>217</y>
     </hint>
    </hints>
   </connection>
@@ -296,8 +303,8 @@
    <slot>setMissingHistonePercent(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>189</x>
-     <y>214</y>
+     <x>218</x>
+     <y>244</y>
     </hint>
     <hint type="destinationlabel">
      <x>191</x>
@@ -312,8 +319,8 @@
    <slot>setNucleosomeSpacingVariance(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>388</x>
-     <y>208</y>
+     <x>567</x>
+     <y>244</y>
     </hint>
     <hint type="destinationlabel">
      <x>382</x>
@@ -328,8 +335,8 @@
    <slot>setCutsPer3kBasePairs(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>671</x>
-     <y>208</y>
+     <x>849</x>
+     <y>244</y>
     </hint>
     <hint type="destinationlabel">
      <x>645</x>
@@ -380,8 +387,24 @@
      <y>135</y>
     </hint>
     <hint type="destinationlabel">
-     <x>315</x>
-     <y>263</y>
+     <x>324</x>
+     <y>480</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>widget</sender>
+   <signal>newVersionLabel(QString)</signal>
+   <receiver>versionLabel</receiver>
+   <slot>setText(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>30</x>
+     <y>77</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>29</x>
+     <y>45</y>
     </hint>
    </hints>
   </connection>

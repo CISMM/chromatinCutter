@@ -255,6 +255,10 @@ void GLWidget::initializeGL()
 
     // Makes the colors for the primitives be what we want.
     glDisable(GL_LIGHTING);
+
+    // Tell the version number.  If we do this in the constructor, it doesn't
+    // get displayed.
+    emit newVersionLabel(tr("Version 1.0.0"));
 }
 
 void GLWidget::paintGL()

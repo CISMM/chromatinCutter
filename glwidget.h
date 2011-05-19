@@ -30,6 +30,7 @@ signals:
     void newMinHistogramValue(double val);
     void newMaxHistogramValue(double val);
     void newHistogramCounts(histogram_values_passer);
+    void newVersionLabel(QString);
 
 protected:
     void initializeGL();
