@@ -12,8 +12,7 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    glwidget.cpp \
-    qtlogo.cpp
+    glwidget.cpp
 
 HEADERS  += mainwindow.h \
     glwidget.h
