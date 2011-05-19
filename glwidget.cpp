@@ -23,14 +23,6 @@ GLWidget::~GLWidget()
 {
 }
 
-static void qNormalizeAngle(int &angle)
-{
-    while (angle < 0)
-        angle += 360 * 16;
-    while (angle > 360 * 16)
-        angle -= 360 * 16;
-}
-
 void GLWidget::setMissingHistonePercent(int percent)
 {
     missingHistonePercent = percent;
@@ -100,7 +92,6 @@ void GLWidget::resizeGL(int width, int height)
         aspect = static_cast<float>(width)/height;
     }
     glOrtho(-aspect/2, aspect/2, -0.5, 0.5, 5.0, 15.0);
-//    glOrtho(-0.5, +0.5, -0.5, +0.5, 4.0, 15.0);
     glMatrixMode(GL_MODELVIEW);
 }
 
