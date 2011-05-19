@@ -20,7 +20,8 @@ public slots:
     void setMaxX(double max_value);
 
     // Sets the counts within each bin, as well as telling us how many bins there
-    // are (there is one per entry in the vector).
+    // are (there is one per entry in the vector).  This is just a QVector of
+    // integer counts.
     void setCounts(const histogram_values_passer counts);
 
 private:

@@ -3,6 +3,12 @@
 
 #include <QGLWidget>
 
+class nucleosome {
+public:
+    int location;   // Index of the last base pair wrapped around the nucleosome
+    bool attached;  // Stores whether it is attached or not.
+};
+
 class GLWidget : public QGLWidget
 {
     Q_OBJECT
@@ -28,13 +34,22 @@ protected:
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
 
+    // Updates the model of histone and cut locations based on
+    // the now-current values for the private variables.
+    void updateModel(void);
+
 private:
+    int totalNucleosomes;
     int missingHistonePercent;
     int nucleosomeSpacingVariance;
     int cutsPer3kBasePairs;
-    QPoint lastPos;
-    QColor qtGreen;
-    QColor qtPurple;
+    QPoint lastPos; // Last place the mouse was.
+
+    // This is a list of histone center locations, in base pairs.
+    QVector<nucleosome>    nucleosomes;
+
+    // This is a list of cut locations, in base pairs.
+    QVector<int>    cutLocations;
 };
 
 #endif
